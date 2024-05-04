@@ -56,11 +56,11 @@ To run this application locally, follow these steps:
 1. **Clone the Repository**:
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/MarwaSh/time-clock-report.git
 
 2. **Navigate to the Project Directory:
    ```bash
-   cd <project-directory>
+   cd time-clock-report
 3. **Install Dependencies:
    ````bash
    npm install
