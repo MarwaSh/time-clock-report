@@ -86,24 +86,27 @@ interface MonthlyReport {
      */
 
       const handleEditStartTime = (startTime: string, date: string) => {
-        if (!validateTime(startTime)) {
-            setError("Invalid start time format. Expected format: HH:MM");
-            return;
-        }
         const updatedEntries = { ...entries };
+        let hasError = false; 
         if (updatedEntries[selectedMonth]) {
             updatedEntries[selectedMonth] = updatedEntries[selectedMonth].map((entry) => {
                 if (entry.date === date) {
+                   // Check if the start time is before the end time
+                    if (startTime >= entry.end) {
+                      hasError = true;
+                      return entry;
+                  } else {
                     entry.start = startTime;
                     entry.hours = calculateHoursWorked(entry.start, entry.end);
                     //updateEntry(entry); // Update entry on the server
+                  }
                 }
                 return entry;
             });
             setEntries(updatedEntries);
             localStorage.setItem('monthlyReports', JSON.stringify(updatedEntries));
         }
-        setError(null);
+        setError(hasError ? "Start time must be before end time." : null);
     };
     
      /**
@@ -112,26 +115,27 @@ interface MonthlyReport {
      * @param {string} endTime The new end time.
      * @param {string} date The date of the entry being edited.
      */
-    const handleEditEndTime = (endTime: string, date: string) => {
-        if (!validateTime(endTime)) {
-            setError("Invalid start time format. Expected format: HH:MM");
-            return;
-        }
-        
+    const handleEditEndTime = (endTime: string, date: string) => {  
         const updatedEntries = { ...entries };
+        let hasError = false; 
         if (updatedEntries[selectedMonth]) {
             updatedEntries[selectedMonth] = updatedEntries[selectedMonth].map((entry) => {
                 if (entry.date === date) {
+                  if (endTime <= entry.start) {
+                    hasError = true;
+                    return entry;
+                } else {
                     entry.end = endTime;
                     entry.hours = calculateHoursWorked(entry.start, entry.end);
                     //updateEntry(entry);
                 }
+              }
                 return entry;
             });
             setEntries(updatedEntries);
             localStorage.setItem('monthlyReports', JSON.stringify(updatedEntries));
         }
-        setError(null);
+        setError(hasError ? "End time must be after start time." : null);
     };
 
     /**

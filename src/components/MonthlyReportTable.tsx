@@ -20,6 +20,20 @@ interface MonthlyReportTableProps {
  * @returns {JSX.Element} The rendered table.
  */
 const MonthlyReportTable: React.FC<MonthlyReportTableProps> = ({ entries, onEditStartTime, onEditEndTime }) => {
+    
+    const handleStartTimeInputChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+        const { value } = event.target;
+        const date = event.currentTarget.getAttribute('data-date') || '';
+        onEditStartTime(value, date);
+    };
+    
+    const handleEndTimeInputChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+        const { value } = event.target;
+        const date = event.currentTarget.getAttribute('data-date') || '';
+        onEditEndTime(value, date);
+    };
+    
+
     return (
         <TableContainer component={Paper}>
             <Table>
@@ -37,16 +51,42 @@ const MonthlyReportTable: React.FC<MonthlyReportTableProps> = ({ entries, onEdit
                             <TableCell>{entry.date}</TableCell>
                             <TableCell>{entry.hours}</TableCell>
                             <TableCell>
-                                <TextField
-                                    value={entry.start}
-                                    onChange={(e) => onEditStartTime(e.target.value, entry.date)}
-                                />
-                                </TableCell>
+                            <TextField
+                                label="Start Time"
+                                type="time"
+                                variant="outlined"
+                                fullWidth
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                                inputProps={{
+                                    'data-date': entry.date,
+                                    step: 300,
+                                }}
+                                value={entry.start}
+                                onChange={handleStartTimeInputChange}
+                            />
+                            </TableCell>
+
+                            
                             <TableCell>
                             <TextField
-                                    value={entry.end}
-                                    onChange={(e) => onEditEndTime(e.target.value, entry.date)}
-                                />
+                                label="End Time"
+                                type="time"
+                                variant="outlined"
+                                fullWidth
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                                inputProps={{
+                                    'data-date': entry.date,
+                                    step: 300,
+                                    min: entry.start, // Set minimum time to the start time
+                                    max: '23:59', // Midnight
+                                }}
+                                value={entry.end} 
+                                onChange={handleEndTimeInputChange}
+                            />
                             </TableCell>
                         </TableRow>
                     ))}
